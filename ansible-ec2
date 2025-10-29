@@ -1,0 +1,25 @@
+######  
+pip install boto boto3 botocore
+ansible-galaxy collection install amazon.aws
+ansible-galaxy collection install community.aws
+
+aws configure
+
+######
+
+---
+- name: creating ec2 instance
+  hosts: localhost
+  tasks:
+        - name: creating Ec2 instance via Ansible
+          amazon.aws.ec2_instance:
+            name: k8s-master
+            instance_type: t3.micro
+            image_id: ami-0a7d80731ae1b2435
+            vpc_subnet_id: subnet-0ff76343d2a62ca85
+            security_group: sg-07befa9a91f333167
+            key_name: devops-key
+            region: us-east-1
+            count: 1
+            state: present
+
