@@ -1,0 +1,15 @@
+!#/bin/bash
+yum update -y
+yum install unzip -y
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+sudo ./aws/install
+aws configure
+curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
+sudo mv /tmp/eksctl /usr/local/bin
+eksctl version
+curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl 
+kubectl version --client
+ssh-keygen
+eksctl create cluster --name devops --region us-east-1 --version 1.32 --node-type t3.small --nodes-min 1 --nodes-max 4 --ssh-access --ssh-public-key /root/.ssh/id_rsa.pub
