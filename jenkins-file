@@ -1,0 +1,59 @@
+install plugins: maven integration, github integration, deploy to container, publish over ssh
+system : add ssh of eks-node
+tools : add maven path, java path
+
+pipeline {
+    agent any
+    stages {
+        stage('Clone Repository') {
+            steps {
+                git branch: 'main', url: 'https://github.com/tonybabu2004-eng/java-project.git'
+            }
+        }
+        stage('Build with Maven') {
+            steps {
+                sh 'mvn clean package'
+            }
+        }
+        stage('Deploy to Docker Host') {
+            steps {
+                sh 'aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/m2r5y6g7'
+                sh 'docker build -t tony-repo .'
+                sh 'docker tag tony-repo:latest public.ecr.aws/m2r5y6g7/tony-repo:latest'
+                sh 'docker push public.ecr.aws/m2r5y6g7/tony-repo:latest'
+            }
+        }
+       stage('Deploy to EKS') {
+    steps {
+        sshPublisher(publishers: [
+            sshPublisherDesc(
+                configName: 'eks-node',
+                transfers: [
+                    sshTransfer(
+                        sourceFiles: 'java-deployment.yaml,java-service.yaml',
+                        remoteDirectory: '', 
+                        removePrefix: '',
+                        execCommand: '''
+                            set -ex
+                            aws eks update-kubeconfig --region us-east-1 --name devops
+                            kubectl delete -f java-deployment.yaml
+                            kubectl apply -f java-deployment.yaml
+                            kubectl apply -f java-service.yaml
+                            kubectl rollout status deployment/java-deployment
+                        '''
+                    )
+                ],
+                usePromotionTimestamp: false,
+                verbose: true
+            )
+        ])
+    }
+}
+    }
+    post {
+        success {
+            junit '**/target/surefire-reports/TEST-*.xml'
+            archiveArtifacts artifacts: '**/target/*.war', fingerprint: true
+        }
+    }
+}
