@@ -1,0 +1,22 @@
+---
+- name: Setup Apache and copy fstab
+  hosts: all
+  become: yes
+
+  tasks:
+    - name: Install httpd
+      apt:
+        name: apache2
+        state: present
+        update_cache: yes
+
+    - name: Start and enable httpd
+      service:
+        name: apache2
+        state: started
+        enabled: yes
+
+    - name: Copy fstab to /tmp
+      copy:
+        src: /etc/fstab
+        dest: /tmp/fstab
