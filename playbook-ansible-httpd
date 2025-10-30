@@ -1,3 +1,31 @@
+#### for amazon linux
+
+---
+- name: Setup Apache and copy fstab
+  hosts: all
+  become: yes
+
+  tasks:
+    - name: Install httpd
+      yum:
+        name: httpd
+        state: present
+
+    - name: Start and enable httpd
+      systemd:
+        name: httpd
+        state: started
+        enabled: yes
+
+    - name: Copy fstab to /tmp
+      copy:
+        src: /etc/fstab
+        dest: /tmp
+
+
+
+### for ubuntu
+
 ---
 - name: Setup Apache and copy fstab
   hosts: all
