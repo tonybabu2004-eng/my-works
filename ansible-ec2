@@ -17,7 +17,7 @@ aws configure
             instance_type: t3.micro
             image_id: ami-0bdd88bd06d16ba03
             vpc_subnet_id: subnet-02bf04f55b8d57d95
-            security_group: sg-0d5f82a0badbb0513
+            security_group: sg-0ed46369eb73f05f7
             key_name: devops-key
             region: us-east-1
             count: 1
