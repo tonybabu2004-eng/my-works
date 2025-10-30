@@ -15,9 +15,9 @@ aws configure
           amazon.aws.ec2_instance:
             name: k8s-master
             instance_type: t3.micro
-            image_id: ami-0a7d80731ae1b2435
-            vpc_subnet_id: subnet-0ff76343d2a62ca85
-            security_group: sg-07befa9a91f333167
+            image_id: ami-0bdd88bd06d16ba03
+            vpc_subnet_id: subnet-02bf04f55b8d57d95
+            security_group: sg-0d5f82a0badbb0513
             key_name: devops-key
             region: us-east-1
             count: 1
